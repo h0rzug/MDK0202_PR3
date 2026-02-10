@@ -1,4 +1,4 @@
-name: Publish NuGet Package
+name: Pub NuGet Package
 
 on:
   workflow_run:
