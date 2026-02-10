@@ -1,4 +1,4 @@
-name: Pub NuGet Package
+name: Publish NuGet Package
 
 on:
   push:
@@ -20,12 +20,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
+          source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
 
       - name: Run tests
         run: dotnet test --configuration Release --no-build --verbosity normal
@@ -34,4 +34,6 @@ jobs:
         run: dotnet pack --configuration Release --no-build --output ./nupkgs
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        run: dotnet nuget push ./nupkgs/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
