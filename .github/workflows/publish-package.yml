@@ -1,15 +1,12 @@
-name: Pub NuGet Package
+name: Publish NuGet Package
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  push:
     branches: [main]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     permissions:
       packages: write
@@ -29,6 +26,9 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
 
       - name: Pack NuGet package
         run: dotnet pack --configuration Release --no-build --output ./nupkgs
